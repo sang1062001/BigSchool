@@ -118,16 +118,12 @@ const bird = {
         { sX: 276, sY: 164 },
         { sX: 276, sY: 139 }
     ],
+
     x: 50,
     y: 150,
     w: 34,
-    h: 26,
     radius: 12,
     frame: 0,
-
-    gravity : 0.15,
-    jump : 2.5,
-    speed : 0,
     rotation : 0,
 
     draw: function () {
@@ -138,43 +134,77 @@ const bird = {
         ctx.drawImage(sprite, bird.sX, bird.sY, this.w, this.h, - this.w / 2, - this.h / 2, this.w, this.h);
         ctx.restore();
     },
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+    ///////////////////////////////////////////////////////////////////////////////////// + là xuống, - là lên
+
+    h: 26, // chiều cao 
+    gravity : 0.15, // trọng lực
+    jump : 2.5, // nhảy
+    speed : 0, // tốc độ bằng 0 khi game bắt đầu   
+
+
+    // phương thức vỗ ( làm thay đổi tốc độ bằng - (- là lên))
     flap: function () {
-        // if (state.current == state.getReady) {
-        //     ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y, this.w, this.h);
-        // }
+        // speed = jump (- là lên)
         this.speed = - this.jump;
     },
+    
+    // phương thức cập nhật
     update: function(){
-
-        this.period = state.current == state.getReady ? 10 : 5;
-
-        this.frame += frames%this.period == 0 ? 1 : 0;
-
-        this.frame = this.frame%this.animation.length;
-
-
+        //  kiểm tra trạng thái hiện tại có = trạng thái sẵn sàng
         if(state.current == state.getReady){
-            this.y = 150; 
-            this.rotation = 0 * DEGREE; // chuyển động chính
+            this.y = 150;  //  vị trí y của con chim nằm ở 150 pixel sau khi game over            
         }else{
-            this.speed += this.gravity;
-            this.y += this.speed;
+            this.speed += this.gravity; // speed luôn bắt đầu bằng gravity, speed thay đổi dựa vào gravity nên chim sẽ rơi xuống vì +
+                                        
+            this.y += this.speed; //  thay đổi vị trí y của con chim = speed
+
+             // nếu là + thì chim sẽ đi xuống - là đi lên
             
+             // kiểm tra y cộng chiều cao/2 thì giá trị này >= chiều cao khung vẽ (canvas) - chiều cao mặt đất (foreground)
             if(this.y + this.h/2 >= cvs.height - fg.h){
+                //  y = chiều cao khung vẽ (canvas) - chiều cao mặt đất (foregoround) - chiều cao/2
                 this.y = cvs.height - fg.h - this.h/2;
+
+                // kiểm tra trạng thái hiện tại có  phải = trạng thái trò chơi hay không
                 if(state.current == state.game){
-                    state.current = state.over;
-                    DIE.play();
+                    // chuyển từ trạng thái trò chơi sang trạng thái Game Over
+                    state.current = state.over;                 
                 }
             }
-            // Nếu tốc độ lớn hơn độ nhảy thì thua 
-            if(this.speed >= this.jump){
-                this.rotation = 90 * DEGREE;
-                this.frame=1;
-            }else{
-                this.rotation = -25 * DEGREE;
-            }
+
         }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     },
     speedReset : function(){
